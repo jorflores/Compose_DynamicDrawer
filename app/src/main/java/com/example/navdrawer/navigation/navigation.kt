@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
@@ -49,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.navdrawer.AppViewModel
 import com.example.navdrawer.screens.about.AboutPage
 import com.example.navdrawer.screens.home.HomePage
+import com.example.navdrawer.screens.register.RegisterPage
 import com.example.navdrawer.screens.settings.SettingsPage
 
 import kotlinx.coroutines.launch
@@ -103,6 +106,12 @@ fun MainPage() {
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
             route = "SettingsPage"
+        ),
+        NavigationItem(
+            title = "Registrar Nueva Cuenta",
+            selectedIcon = Icons.Filled.Create,
+            unselectedIcon = Icons.Outlined.Create,
+            route = "RegisterPage"
         )
     ) else
         listOf(
@@ -202,6 +211,10 @@ fun MainPage() {
 
                     composable("AboutPage") {
                         AboutPage()
+                    }
+
+                    composable("RegisterPage") {
+                        RegisterPage()
                     }
 
                     composable("SettingsPage") {
