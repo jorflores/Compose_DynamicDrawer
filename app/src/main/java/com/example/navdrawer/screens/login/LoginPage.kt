@@ -1,5 +1,7 @@
-package com.example.navdrawer.screens.register
+package com.example.navdrawer.screens.login
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -21,17 +23,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+import com.example.navdrawer.AppViewModel
+import com.example.navdrawer.dataStore.DataStoreManager
+import com.example.navdrawer.model.UserLoginResponse
 import com.example.navdrawer.service.UserService
 import com.example.navdrawer.viewModel.UserViewModel
+import kotlinx.coroutines.launch
 
 
-
-@Preview(showBackground = true)
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun RegisterPage() {
+fun LoginPage(appviewModel: AppViewModel) {
+
+
 
     val viewModel = UserViewModel(UserService.instance)
 
@@ -43,18 +50,24 @@ fun RegisterPage() {
         mutableStateOf("")
     }
 
-    var validarpassword by remember {
-        mutableStateOf("")
+
+    var loginResult by remember {
+        mutableStateOf(UserLoginResponse())
     }
 
-    var registrationResult by remember { mutableStateOf<UserViewModel.ApiResult?>(null) }
+   LaunchedEffect(key1 = viewModel) {
+        viewModel.loginResult.collect { result ->
+            if (result != null) {
+                loginResult = result
 
-    LaunchedEffect(key1 = viewModel) {
-        viewModel.registrationResult.collect { result ->
-            registrationResult = result
+                loginResult.token?.let { appviewModel.dataStore.saveToken(it)
+
+
+                    Log.d("DATASTORE","Token saved: ${it}")}
+
+            }
         }
     }
-
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -62,7 +75,7 @@ fun RegisterPage() {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        Text("Registrar Usuario", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        Text("Login", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
 
         TextField(value = telefono, onValueChange = {
             telefono = it
@@ -82,46 +95,22 @@ fun RegisterPage() {
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
         )
 
-        TextField(value = validarpassword, onValueChange = {
-            validarpassword = it
-        }, placeholder = {
-            Text("Confirma tu contraseña")
-        }, visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
-        )
-
         Button(onClick = {
 
-            viewModel.addUser(telefono.trim().toInt(),password)
+          viewModel.loginUser(telefono.trim().toInt(),password)
+
+
 
 
         }) {
-            Text(text = "Registrar Usuario")
+            Text(text = "Ingresar")
         }
 
+            Text("${loginResult.token}  ${loginResult.message}")
 
-        when (val result = registrationResult) {
-            is UserViewModel.ApiResult.Success -> {
-                showToast("${result.message}")
-                Log.d("REGISTER",result.message)
-            }
-            is UserViewModel.ApiResult.Error -> {
-                showToast("${result.errorMessage}")
-                Log.d("REGISTER",result.errorMessage)
-            }
-            else -> {
-                Log.d("REGISTER",result.toString())
-            }
-        }
 
     }
 }
 
 
-@Composable
-fun showToast(message: String) {
-    val context = LocalContext.current
-    val duration = Toast.LENGTH_SHORT
-    val toast = Toast.makeText(context, message, duration)
-    toast.show()
-}
+

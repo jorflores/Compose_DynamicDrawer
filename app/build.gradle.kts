@@ -69,7 +69,7 @@ dependencies {
 
     implementation ("androidx.navigation:navigation-compose:2.4.0")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
     // Retrofit
 
@@ -78,4 +78,9 @@ dependencies {
 
     //GSON converter
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+
+    //DataStore
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
 }

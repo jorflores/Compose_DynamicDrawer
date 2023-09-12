@@ -1,6 +1,6 @@
 package com.example.navdrawer.model
 
-data class User(
+data class UserRegister(
     val phoneNumber: Int,
     val password: String
 

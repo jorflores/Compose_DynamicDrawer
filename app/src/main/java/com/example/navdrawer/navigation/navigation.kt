@@ -3,17 +3,20 @@ package com.example.navdrawer.navigation
 
 
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Home
@@ -41,6 +44,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,8 +55,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.navdrawer.AppViewModel
 import com.example.navdrawer.screens.about.AboutPage
 import com.example.navdrawer.screens.home.HomePage
+import com.example.navdrawer.screens.login.LoginPage
 import com.example.navdrawer.screens.register.RegisterPage
 import com.example.navdrawer.screens.settings.SettingsPage
+import com.example.navdrawer.viewModel.AppViewModelFactory
 
 import kotlinx.coroutines.launch
 
@@ -71,9 +77,7 @@ data class NavigationItem(
 fun MainPage() {
 
 
-
-
-
+    val context = LocalContext.current
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -82,7 +86,9 @@ fun MainPage() {
         mutableStateOf(0)
     }
 
-    val viewModel: AppViewModel = viewModel()
+  //  val viewModel: AppViewModel = viewModel()
+
+    val viewModel: AppViewModel = viewModel(factory = AppViewModelFactory(context))
 
     var loggedIn by remember {
       mutableStateOf(viewModel.isUserLoggedIn())
@@ -112,6 +118,12 @@ fun MainPage() {
             selectedIcon = Icons.Filled.Create,
             unselectedIcon = Icons.Outlined.Create,
             route = "RegisterPage"
+        ),
+        NavigationItem(
+            title = "Login",
+            selectedIcon = Icons.Filled.AccountCircle,
+            unselectedIcon = Icons.Outlined.AccountCircle,
+            route = "LoginPage"
         )
     ) else
         listOf(
@@ -215,6 +227,10 @@ fun MainPage() {
 
                     composable("RegisterPage") {
                         RegisterPage()
+                    }
+
+                    composable("LoginPage") {
+                        LoginPage(viewModel)
                     }
 
                     composable("SettingsPage") {
