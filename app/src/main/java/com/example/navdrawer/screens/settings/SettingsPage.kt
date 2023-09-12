@@ -8,33 +8,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
-import com.example.navdrawer.AppViewModel
+import com.example.navdrawer.viewModel.AppViewModel
 
 @Composable
 fun SettingsPage(
-    viewModel: AppViewModel,
+    appViewModel: AppViewModel,
     navController: NavHostController,
     onLoggedInChanged: (Boolean) -> Unit
 ) {
     var loggedIn by remember {
-        mutableStateOf(viewModel.isUserLoggedIn())
+        mutableStateOf(appViewModel.isUserLoggedIn())
     }
 
     Column {
         Text(text = "Welcome to SettingsPage")
         Button(onClick = {
-            viewModel.setLoggedIn()
+            appViewModel.setLoggedIn()
             loggedIn = true
             onLoggedInChanged(true) // Notify the callback of the change
         }) {
             Text("Log In")
         }
         Button(onClick = {
-            viewModel.setLoggedOut()
+            appViewModel.setLoggedOut()
             loggedIn = false
             onLoggedInChanged(false) // Notify the callback of the change
         }) {

@@ -25,13 +25,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.navdrawer.service.UserService
+import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.viewModel.UserViewModel
 
 
 
 @Preview(showBackground = true)
 @Composable
-fun RegisterPage() {
+fun RegisterPage(appViewModel: AppViewModel = AppViewModel(LocalContext.current)) {
 
     val viewModel = UserViewModel(UserService.instance)
 

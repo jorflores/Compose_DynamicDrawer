@@ -1,9 +1,7 @@
 package com.example.navdrawer.navigation
 
 
-
-
-import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -14,6 +12,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -21,6 +20,7 @@ import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,11 +35,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -48,16 +48,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.navdrawer.AppViewModel
+import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.screens.about.AboutPage
 import com.example.navdrawer.screens.home.HomePage
 import com.example.navdrawer.screens.login.LoginPage
+import com.example.navdrawer.screens.protect.TestProtectedPage
 import com.example.navdrawer.screens.register.RegisterPage
 import com.example.navdrawer.screens.settings.SettingsPage
+import com.example.navdrawer.util.constants.Constants
 import com.example.navdrawer.viewModel.AppViewModelFactory
 
 import kotlinx.coroutines.launch
@@ -71,14 +72,12 @@ data class NavigationItem(
 )
 
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage() {
+fun MainPage(appViewModel: AppViewModel) {
 
-
-    val context = LocalContext.current
-
+    // val context = LocalContext.current
+    // val appViewModel: AppViewModel = viewModel(factory = AppViewModelFactory(context))
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -86,15 +85,26 @@ fun MainPage() {
         mutableStateOf(0)
     }
 
-  //  val viewModel: AppViewModel = viewModel()
-
-    val viewModel: AppViewModel = viewModel(factory = AppViewModelFactory(context))
 
     var loggedIn by remember {
-      mutableStateOf(viewModel.isUserLoggedIn())
+        mutableStateOf(appViewModel.isUserLoggedIn())
     }
 
-    val items = if(!loggedIn) listOf(
+    LaunchedEffect(appViewModel.isUserLoggedIn()) {
+        appViewModel.isInitialized.collect { result ->
+
+            loggedIn = result
+
+        }
+    }
+
+
+    LaunchedEffect(appViewModel.isUserLoggedIn()) {
+        loggedIn = appViewModel.isUserLoggedIn()
+        //  tokenResult = appviewModel
+    }
+
+    val items = if (!loggedIn) listOf(
         NavigationItem(
             title = "HomePage",
             selectedIcon = Icons.Filled.Home,
@@ -124,6 +134,12 @@ fun MainPage() {
             selectedIcon = Icons.Filled.AccountCircle,
             unselectedIcon = Icons.Outlined.AccountCircle,
             route = "LoginPage"
+        ),
+        NavigationItem(
+            title = "Test Protected Page",
+            selectedIcon = Icons.Filled.Lock,
+            unselectedIcon = Icons.Outlined.Lock,
+            route = "TestProtectedPage"
         )
     ) else
         listOf(
@@ -204,7 +220,7 @@ fun MainPage() {
                             drawerState.close()
                         }
                     }
-                    
+
 
                 }) {
                     Icon(Icons.Filled.Menu, contentDescription = "Drawer Menu.")
@@ -218,26 +234,31 @@ fun MainPage() {
                 NavHost(navController = navController, startDestination = "HomePage") {
 
                     composable("HomePage") {
-                        HomePage(viewModel)
+                        HomePage(appViewModel)
                     }
 
                     composable("AboutPage") {
-                        AboutPage()
+                        AboutPage(appViewModel)
                     }
 
                     composable("RegisterPage") {
-                        RegisterPage()
+                        RegisterPage(appViewModel)
                     }
 
                     composable("LoginPage") {
-                        LoginPage(viewModel)
+                        LoginPage(appViewModel)
                     }
 
+                    composable("TestProtectedPage") {
+                        TestProtectedPage(appViewModel)
+                    }
+
+
                     composable("SettingsPage") {
-                        SettingsPage(viewModel, navController) { value ->
+                        SettingsPage(appViewModel, navController) { value ->
                             // Update the loggedIn state in MainPage when it changes
                             loggedIn = value
-                          //  selectedItemIndex = if (value) 1 else 0
+                            //  selectedItemIndex = if (value) 1 else 0
                         }
                     }
                 }
@@ -245,4 +266,7 @@ fun MainPage() {
         }
     }
 }
+
+
+
 

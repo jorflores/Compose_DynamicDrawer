@@ -2,11 +2,14 @@ package com.example.navdrawer.service
 
 import com.example.navdrawer.model.UserLogin
 import com.example.navdrawer.model.UserLoginResponse
+import com.example.navdrawer.model.UserProtectedResponse
 import com.example.navdrawer.model.UserRegister
 import com.example.navdrawer.model.UserRegistrationResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
@@ -25,5 +28,9 @@ interface UserService {
 
     @POST("login")
     suspend fun loginUser(@Body user: UserLogin): UserLoginResponse
+
+    @GET("/protected")
+    @Headers("Authorization: {token}")
+    suspend fun protectedRoute(@Header("token") token: String) : UserProtectedResponse
 
 }
