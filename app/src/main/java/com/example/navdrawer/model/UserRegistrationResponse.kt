@@ -1,5 +1,5 @@
 package com.example.navdrawer.model
 
-data class UserResponse(
+data class UserRegistrationResponse(
     val message: String
 )

@@ -1,11 +1,17 @@
 package com.example.navdrawer
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 
-class AppViewModel : ViewModel() {
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.navdrawer.dataStore.DataStoreManager
+
+class AppViewModel(context: Context) : ViewModel() {
+
+
+    val dataStore = DataStoreManager(context)
 
     private var isLoggedIn = false
 
@@ -24,18 +30,8 @@ class AppViewModel : ViewModel() {
 
 
 
-    /*
-    private val _isLoggedIn = MutableLiveData<Boolean>(false)
-    val isLoggedIn: LiveData<Boolean>
-        get() = _isLoggedIn
-
-    fun setLoggedIn() {
-        _isLoggedIn.value = true
-    }
-
-    fun setLoggedOut() {
-        _isLoggedIn.value = false
-    }*/
-
-
 }
+
+
+
+
