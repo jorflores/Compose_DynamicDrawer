@@ -3,8 +3,7 @@ package com.example.navdrawer.screens.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.LiveData
-import com.example.navdrawer.AppViewModel
+import com.example.navdrawer.viewModel.AppViewModel
 
 @Composable
 fun HomePage(viewModel: AppViewModel) {

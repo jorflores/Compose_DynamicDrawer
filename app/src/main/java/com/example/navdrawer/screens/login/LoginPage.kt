@@ -1,9 +1,7 @@
 package com.example.navdrawer.screens.login
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,19 +17,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-import com.example.navdrawer.AppViewModel
-import com.example.navdrawer.dataStore.DataStoreManager
+import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.model.UserLoginResponse
 import com.example.navdrawer.service.UserService
 import com.example.navdrawer.viewModel.UserViewModel
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -39,8 +34,7 @@ import kotlinx.coroutines.launch
 fun LoginPage(appviewModel: AppViewModel) {
 
 
-
-    val viewModel = UserViewModel(UserService.instance)
+    val userviewModel = UserViewModel(UserService.instance)
 
     var telefono by remember {
         mutableStateOf("")
@@ -55,12 +49,12 @@ fun LoginPage(appviewModel: AppViewModel) {
         mutableStateOf(UserLoginResponse())
     }
 
-   LaunchedEffect(key1 = viewModel) {
-        viewModel.loginResult.collect { result ->
+   LaunchedEffect(key1 = userviewModel) {
+        userviewModel.loginResult.collect { result ->
             if (result != null) {
                 loginResult = result
 
-                loginResult.token?.let { appviewModel.dataStore.saveToken(it)
+                loginResult.token?.let { appviewModel.storeAndLoadToken(it)
 
 
                     Log.d("DATASTORE","Token saved: ${it}")}
@@ -97,7 +91,7 @@ fun LoginPage(appviewModel: AppViewModel) {
 
         Button(onClick = {
 
-          viewModel.loginUser(telefono.trim().toInt(),password)
+          userviewModel.loginUser(telefono.trim().toInt(),password)
 
 
 

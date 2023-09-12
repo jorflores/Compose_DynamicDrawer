@@ -71,6 +71,7 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
+
     // Retrofit
 
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")

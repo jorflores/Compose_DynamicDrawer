@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.navdrawer.AppViewModel
 import com.example.navdrawer.model.UserLogin
 import com.example.navdrawer.model.UserLoginResponse
 import com.example.navdrawer.model.UserRegister
