@@ -31,7 +31,8 @@ import com.example.navdrawer.viewModel.UserViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun LoginPage(appviewModel: AppViewModel) {
+fun LoginPage(appviewModel: AppViewModel,
+              onLoggedInChanged: (Boolean) -> Unit) {
 
 
     val userviewModel = UserViewModel(UserService.instance)
@@ -53,12 +54,11 @@ fun LoginPage(appviewModel: AppViewModel) {
         userviewModel.loginResult.collect { result ->
             if (result != null) {
                 loginResult = result
-
                 loginResult.token?.let { appviewModel.storeAndLoadToken(it)
-
 
                     Log.d("DATASTORE","Token saved: ${it}")}
 
+                onLoggedInChanged(true)
             }
         }
     }

@@ -29,8 +29,8 @@ interface UserService {
     @POST("login")
     suspend fun loginUser(@Body user: UserLogin): UserLoginResponse
 
-    @GET("/protected")
-    @Headers("Authorization: {token}")
-    suspend fun protectedRoute(@Header("token") token: String) : UserProtectedResponse
+    @GET("protected")
+    //@Headers("Authorization: {token}")
+    suspend fun protectedRoute(@Header("Authorization") token: String) : UserProtectedResponse
 
 }

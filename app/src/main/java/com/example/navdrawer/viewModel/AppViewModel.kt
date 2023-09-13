@@ -56,6 +56,14 @@ class AppViewModel(context: Context) : ViewModel() {
 
     }
 
+    fun deleteToken(){
+        viewModelScope.launch {
+            dataStore.deleteValue(Constants.TOKEN)
+            token =""
+            setLoggedOut()
+        }
+    }
+
     fun getToken(): String {
         return token
     }
