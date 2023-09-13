@@ -76,8 +76,6 @@ data class NavigationItem(
 @Composable
 fun MainPage(appViewModel: AppViewModel) {
 
-    // val context = LocalContext.current
-    // val appViewModel: AppViewModel = viewModel(factory = AppViewModelFactory(context))
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -90,19 +88,18 @@ fun MainPage(appViewModel: AppViewModel) {
         mutableStateOf(appViewModel.isUserLoggedIn())
     }
 
-    LaunchedEffect(appViewModel.isUserLoggedIn()) {
+   /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
         appViewModel.isInitialized.collect { result ->
 
             loggedIn = result
 
         }
-    }
+    }*/
 
 
-    LaunchedEffect(appViewModel.isUserLoggedIn()) {
+   /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
         loggedIn = appViewModel.isUserLoggedIn()
-        //  tokenResult = appviewModel
-    }
+    }*/
 
     val items = if (!loggedIn) listOf(
         NavigationItem(
@@ -161,8 +158,15 @@ fun MainPage(appViewModel: AppViewModel) {
                 unselectedIcon = Icons.Outlined.Settings,
                 route = "SettingsPage"
             ),
+
             NavigationItem(
-                title = "LogOff",
+                title = "Test Protected Page",
+                selectedIcon = Icons.Filled.Lock,
+                unselectedIcon = Icons.Outlined.Lock,
+                route = "TestProtectedPage"
+            ),
+            NavigationItem(
+                title = "LogOut",
                 selectedIcon = Icons.Filled.Clear,
                 unselectedIcon = Icons.Outlined.Clear,
                 route = "LogOff"
@@ -246,7 +250,10 @@ fun MainPage(appViewModel: AppViewModel) {
                     }
 
                     composable("LoginPage") {
-                        LoginPage(appViewModel)
+                        LoginPage(appViewModel){
+                                value ->
+                            loggedIn = value
+                        }
                     }
 
                     composable("TestProtectedPage") {

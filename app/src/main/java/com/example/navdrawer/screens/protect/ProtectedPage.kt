@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.example.navdrawer.viewModel.AppViewModel
-import com.example.navdrawer.model.UserLoginResponse
 import com.example.navdrawer.service.UserService
-import com.example.navdrawer.util.constants.Constants
 import com.example.navdrawer.viewModel.UserViewModel
 
 
@@ -39,13 +36,11 @@ fun TestProtectedPage(appviewModel: AppViewModel = AppViewModel(LocalContext.cur
 
     val userViewModel = UserViewModel(UserService.instance)
 
-    var hasTokenResult by remember { mutableStateOf(false) }
+    var hasToken by remember { mutableStateOf(appviewModel.getToken().isNotEmpty()) }
 
-
-    LaunchedEffect(Unit) {
-        hasTokenResult = appviewModel.dataStore.hasKeyWithValue(Constants.TOKEN)
+    var token by remember {
+        mutableStateOf(appviewModel.getToken())
     }
-
 
 
     Column(
@@ -60,23 +55,21 @@ Row {
     Button(onClick = {
 
 
-        Log.d("TOKEN2",appviewModel.getToken())
-
-        //val token = appviewModel.dataStore.getTokenAsync()
-
+       userViewModel.testProtectedRequest(token)
 
     }) {
-        Text(text = "Mostrar Token")
+        Text(text = "Request Protected")
     }
 
     Spacer(modifier = Modifier.width(16.dp))
 
     Button(onClick = {
 
-        //viewModel.loginUser(telefono.trim().toInt(),password)
 
-        Log.d("TOKEN2",appviewModel.getToken())
-        //val token = appviewModel.dataStore.getTokenAsync()
+        appviewModel.deleteToken()
+        token = ""
+        hasToken = false
+
 
 
     }) {
@@ -86,9 +79,9 @@ Row {
 }
 
 
-        Text(text = "Has token?: $hasTokenResult")
+        Text(text = "Has token?: $hasToken")
 
-        Text(text = appviewModel.getToken())
+        Text("${token}")
 
     }
 }

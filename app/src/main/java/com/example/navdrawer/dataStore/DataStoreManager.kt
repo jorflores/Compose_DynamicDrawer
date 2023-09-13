@@ -47,19 +47,8 @@ class DataStoreManager(val context: Context) {
     }
 
 
-    // Define a coroutine function
-    /*suspend fun getToken(): String {
-        return withContext(Dispatchers.IO) {
-            // Call your suspend function inside the IO dispatcher
-            context.dataStore.data.map { preferences ->
-                preferences[TOKEN] ?: ""
-            }.first()
-        }
-    }*/
-
 
     // val token: String = getValueFromDataStore(TOKEN, "")
-
     // val someValue: Int = getValueFromDataStore(SOME_KEY, 0)
     suspend inline fun <reified T : Any> getValueFromDataStore(key: Preferences.Key<T>, defaultValue: T): T {
         return withContext(Dispatchers.IO) {

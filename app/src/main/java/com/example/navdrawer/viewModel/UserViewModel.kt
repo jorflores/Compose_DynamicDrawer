@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.navdrawer.model.UserLogin
 import com.example.navdrawer.model.UserLoginResponse
+import com.example.navdrawer.model.UserProtectedResponse
 import com.example.navdrawer.model.UserRegister
 import com.example.navdrawer.model.UserRegistrationResponse
 import com.example.navdrawer.service.UserService
@@ -29,6 +30,14 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
     private val _loginResult = MutableStateFlow<UserLoginResponse?>(null)
     val loginResult: StateFlow<UserLoginResponse?> //= _loginResult
         get() = _loginResult
+
+
+    private val _protectedResult = MutableStateFlow<UserProtectedResponse?>(null)
+    val protectedResult: StateFlow<UserProtectedResponse?> //= _loginResult
+        get() = _protectedResult
+
+
+
 
     fun addUser(telephone: Int, password: String) {
         val user = UserRegister(telephone, password)
@@ -84,6 +93,53 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
         }
     }
+
+
+
+
+
+
+    fun testProtectedRequest(token : String) {
+
+
+        viewModelScope.launch {
+            var response: UserProtectedResponse? = null
+            try {
+                response = userService.protectedRoute(token)
+                _protectedResult.value = response
+                Log.d("RESPONSE", response.message)
+            } catch (e: HttpException) {
+
+                when (e.code()) {
+
+                    401 -> {
+                        Log.d("RESPONSE", e.localizedMessage)
+                        val errorMessage = "Invalid credentials"
+                        val errorResponse = UserProtectedResponse(errorMessage)
+                        _protectedResult.value = errorResponse
+                    }
+
+                    else -> {
+                        Log.d("RESPONSE", e.localizedMessage)
+                        val errorMessage = e.localizedMessage
+                        val errorResponse = UserProtectedResponse(errorMessage)
+                        _protectedResult.value = errorResponse
+                    }
+
+                }
+
+
+            }
+
+        }
+    }
+
+
+
+
+
+
+
 
 
 }
