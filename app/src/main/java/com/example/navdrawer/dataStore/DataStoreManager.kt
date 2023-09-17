@@ -2,11 +2,12 @@ package com.example.navdrawer.dataStore
 
 import android.content.Context
 import android.util.Log
+
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.navdrawer.util.constants.Constants.TOKEN
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -20,13 +21,21 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DAT
 class DataStoreManager(val context: Context) {
 
 
-     suspend fun storeValue(value: String, key:  Preferences.Key<String>) {
+    /* suspend fun storeValue(value: String, key:  Preferences.Key<String>) {
         context.dataStore.edit {
             it[key] = value
         }
         Log.d("DATASTORE", "Value saved: $value")
 
+    }*/
+
+    suspend fun <T> storeValue(value: T, key: Preferences.Key<T>) {
+        context.dataStore.edit { preferences ->
+            preferences[key] = value
+        }
+        Log.d("DATASTORE", "Value saved: $value")
     }
+
 
     suspend fun deleteValue(key: Preferences.Key<*>) {
         context.dataStore.edit { preferences ->
@@ -42,8 +51,6 @@ class DataStoreManager(val context: Context) {
                 preferences[key] ?: ""
             }.first().isNotEmpty()
         }
-
-
     }
 
 
