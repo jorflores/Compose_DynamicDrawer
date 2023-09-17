@@ -1,5 +1,6 @@
 package com.example.navdrawer.util.constants
 
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object Constants {
@@ -9,6 +10,7 @@ object Constants {
 
     // Keys to store values in data store
      val TOKEN = stringPreferencesKey("TOKEN")
+     val ISADMIN = booleanPreferencesKey("ISADMIN")
 
 
 }

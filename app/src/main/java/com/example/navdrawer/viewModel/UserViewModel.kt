@@ -85,10 +85,13 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
                         val errorResponse = UserLoginResponse(null, errorMessage)
                         _loginResult.value = errorResponse
                     }
-
                 }
-
-
+            }
+            catch (e: Exception){
+                Log.d("RESPONSE", e.localizedMessage)
+                val errorMessage = e.localizedMessage
+                val errorResponse = UserLoginResponse(null, errorMessage)
+                _loginResult.value = errorResponse
             }
 
         }

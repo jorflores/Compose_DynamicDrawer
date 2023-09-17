@@ -21,6 +21,10 @@ fun SettingsPage(
         mutableStateOf(appViewModel.isUserLoggedIn())
     }
 
+    var isAdmin by remember {
+        mutableStateOf(appViewModel.isAdmin())
+    }
+
     Column {
         Text(text = "Welcome to SettingsPage")
         Button(onClick = {
@@ -38,7 +42,7 @@ fun SettingsPage(
             Text("Log Out")
         }
 
-        Text(text = "Is logged In: ${loggedIn}")
+        Text(text = "Is Admin?:  ${isAdmin}")
     }
 }
 

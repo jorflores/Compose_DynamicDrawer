@@ -3,17 +3,10 @@ package com.example.navdrawer.viewModel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.navdrawer.dataStore.DataStoreManager
-import com.example.navdrawer.model.UserLoginResponse
 import com.example.navdrawer.util.constants.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,8 +15,10 @@ import kotlinx.coroutines.launch
 class AppViewModel(context: Context) : ViewModel() {
 
     val dataStore = DataStoreManager(context)
+
     private var token = ""
     private var isLoggedIn = false
+    private var isAdmin = false
 
 
     private val _isInitialized = MutableStateFlow(false)
@@ -33,12 +28,14 @@ class AppViewModel(context: Context) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            var hasTokenResult = dataStore.hasKeyWithValue(Constants.TOKEN)
-            var token = dataStore.getValueFromDataStore(Constants.TOKEN, "")
+            val hasTokenResult = dataStore.hasKeyWithValue(Constants.TOKEN)
+            val token = dataStore.getValueFromDataStore(Constants.TOKEN, "")
+            val isAdmin = dataStore.getValueFromDataStore(Constants.ISADMIN, false)
 
             if (hasTokenResult) {
                 setLoggedIn()
                 setToken(token)
+                setIsAdmin(isAdmin)
             }
             _isInitialized.value = true
             Log.d("POSTVALUE","posting value *** ${_isInitialized.value}")
@@ -46,15 +43,12 @@ class AppViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun storeAndLoadToken(mytoken: String) {
-
+     fun <T> storeValueInDataStore(value: T, key: Preferences.Key<T>) {
         viewModelScope.launch {
-            dataStore.storeValue(mytoken, Constants.TOKEN)
-            token = mytoken
-            setLoggedIn()
+            dataStore.storeValue(value, key)
         }
-
     }
+
 
     fun deleteToken(){
         viewModelScope.launch {
@@ -68,7 +62,7 @@ class AppViewModel(context: Context) : ViewModel() {
         return token
     }
 
-    fun setToken(mytoken: String) {
+     fun setToken(mytoken: String) {
         token = mytoken
     }
 
@@ -82,5 +76,13 @@ class AppViewModel(context: Context) : ViewModel() {
 
     fun isUserLoggedIn(): Boolean {
         return isLoggedIn
+    }
+
+    fun isAdmin(): Boolean {
+        return isAdmin
+    }
+
+    fun setIsAdmin(value: Boolean){
+        isAdmin = value
     }
 }

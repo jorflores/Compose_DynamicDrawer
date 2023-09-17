@@ -26,13 +26,16 @@ import androidx.compose.ui.unit.sp
 import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.model.UserLoginResponse
 import com.example.navdrawer.service.UserService
+import com.example.navdrawer.util.constants.Constants
 import com.example.navdrawer.viewModel.UserViewModel
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun LoginPage(appviewModel: AppViewModel,
-              onLoggedInChanged: (Boolean) -> Unit) {
+fun LoginPage(
+    appviewModel: AppViewModel,
+    onLoggedInChanged: (Boolean) -> Unit
+) {
 
 
     val userviewModel = UserViewModel(UserService.instance)
@@ -45,18 +48,30 @@ fun LoginPage(appviewModel: AppViewModel,
         mutableStateOf("")
     }
 
-
     var loginResult by remember {
         mutableStateOf(UserLoginResponse())
     }
 
-   LaunchedEffect(key1 = userviewModel) {
+    LaunchedEffect(key1 = userviewModel) {
         userviewModel.loginResult.collect { result ->
             if (result != null) {
                 loginResult = result
-                loginResult.token?.let { appviewModel.storeAndLoadToken(it)
+                loginResult.token?.let {
+                    appviewModel.storeValueInDataStore(it, Constants.TOKEN)
+                    appviewModel.setToken(it)
+                    appviewModel.setLoggedIn()
 
-                    Log.d("DATASTORE","Token saved: ${it}")}
+                    Log.d("DATASTORE", "Token saved: ${it}")
+                }
+                loginResult.isAdmin.let {
+                    appviewModel.storeValueInDataStore(it,Constants.ISADMIN)
+                    appviewModel.setIsAdmin(it)
+                }
+
+
+
+                    // store in store and update viewModel
+
 
                 onLoggedInChanged(true)
             }
@@ -91,16 +106,14 @@ fun LoginPage(appviewModel: AppViewModel,
 
         Button(onClick = {
 
-          userviewModel.loginUser(telefono.trim().toInt(),password)
-
-
+            userviewModel.loginUser(telefono.trim().toInt(), password)
 
 
         }) {
             Text(text = "Ingresar")
         }
 
-            Text("${loginResult.token}  ${loginResult.message}")
+        Text("${loginResult.token}  ${loginResult.message}")
 
 
     }
