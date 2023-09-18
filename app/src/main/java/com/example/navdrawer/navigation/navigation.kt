@@ -1,7 +1,6 @@
 package com.example.navdrawer.navigation
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -37,7 +36,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,10 +44,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -57,12 +52,11 @@ import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.screens.about.AboutPage
 import com.example.navdrawer.screens.home.HomePage
 import com.example.navdrawer.screens.login.LoginPage
+import com.example.navdrawer.screens.organizations.LoginOrg
 import com.example.navdrawer.screens.organizations.RegisterOrgPage
 import com.example.navdrawer.screens.protect.TestProtectedPage
 import com.example.navdrawer.screens.register.RegisterPage
 import com.example.navdrawer.screens.settings.SettingsPage
-import com.example.navdrawer.util.constants.Constants
-import com.example.navdrawer.viewModel.AppViewModelFactory
 
 import kotlinx.coroutines.launch
 
@@ -173,8 +167,17 @@ fun MainPage(appViewModel: AppViewModel) {
                 selectedIcon = Icons.Filled.Clear,
                 unselectedIcon = Icons.Outlined.Clear,
                 route = "LogOff"
+            ),
+            NavigationItem(
+                title = "Org Login",
+                selectedIcon = Icons.Filled.Info,
+                unselectedIcon = Icons.Outlined.Info,
+                route = "OrgLogin"
             )
         )
+
+
+
 
 
     if(appViewModel.isAdmin()){
@@ -267,12 +270,23 @@ fun MainPage(appViewModel: AppViewModel) {
                         RegisterOrgPage(appViewModel)
                     }
 
+                    composable("OrgLogin") {
+                        LoginOrg(appViewModel)
+                    }
+
+
+
                     composable("LoginPage") {
                         LoginPage(appViewModel){
                                 value ->
                             loggedIn = value
                         }
                     }
+
+
+
+
+
 
                     composable("TestProtectedPage") {
                         TestProtectedPage(appViewModel)
