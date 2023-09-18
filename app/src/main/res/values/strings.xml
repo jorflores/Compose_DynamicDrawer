@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">NavDrawer</string>
+
+    <string name="gcp_id">784626069081-nm85f9tq7dleebkg9f67jt8nsfbk02cg.apps.googleusercontent.com</string>
+
+
 </resources>
