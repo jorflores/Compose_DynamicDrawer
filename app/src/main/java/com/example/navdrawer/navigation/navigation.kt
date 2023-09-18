@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
@@ -55,6 +57,7 @@ import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.screens.about.AboutPage
 import com.example.navdrawer.screens.home.HomePage
 import com.example.navdrawer.screens.login.LoginPage
+import com.example.navdrawer.screens.organizations.RegisterOrgPage
 import com.example.navdrawer.screens.protect.TestProtectedPage
 import com.example.navdrawer.screens.register.RegisterPage
 import com.example.navdrawer.screens.settings.SettingsPage
@@ -101,7 +104,7 @@ fun MainPage(appViewModel: AppViewModel) {
         loggedIn = appViewModel.isUserLoggedIn()
     }*/
 
-    val items = if (!loggedIn) listOf(
+    val items = if (!loggedIn) mutableListOf(
         NavigationItem(
             title = "HomePage",
             selectedIcon = Icons.Filled.Home,
@@ -139,7 +142,7 @@ fun MainPage(appViewModel: AppViewModel) {
             route = "TestProtectedPage"
         )
     ) else
-        listOf(
+        mutableListOf(
             NavigationItem(
                 title = "HomePage",
                 selectedIcon = Icons.Filled.Home,
@@ -173,6 +176,17 @@ fun MainPage(appViewModel: AppViewModel) {
             )
         )
 
+
+    if(appViewModel.isAdmin()){
+        items.add(
+            NavigationItem(
+                title = "Add Organization",
+                selectedIcon = Icons.Filled.List,
+                unselectedIcon = Icons.Outlined.List,
+                route = "RegisterOrg"
+            )
+        )
+    }
 
 
     ModalNavigationDrawer(drawerContent = {
@@ -247,6 +261,10 @@ fun MainPage(appViewModel: AppViewModel) {
 
                     composable("RegisterPage") {
                         RegisterPage(appViewModel)
+                    }
+
+                    composable("RegisterOrg") {
+                        RegisterOrgPage(appViewModel)
                     }
 
                     composable("LoginPage") {

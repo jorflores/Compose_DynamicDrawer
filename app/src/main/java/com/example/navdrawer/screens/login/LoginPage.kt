@@ -72,7 +72,6 @@ fun LoginPage(
 
                     // store in store and update viewModel
 
-
                 onLoggedInChanged(true)
             }
         }
