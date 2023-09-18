@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.navdrawer.R
@@ -59,8 +58,16 @@ fun LoginOrg(appViewModel: AppViewModel) {
                 val intent = result.data
                 if (result.data != null) {
                     val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(intent)
-                  val account =   handleSignInResult(task)
-                    userInfo.value = account
+
+                    val accountDetails = task.result
+                    //Logging
+                    Log.d("PRUEBA", "Email: ${accountDetails?.email}")
+
+
+                    accountDetails.idToken?.let { Log.d("PRUEBA",  accountDetails.idToken) }
+                    accountDetails.id?.let { Log.d("PRUEBA",  accountDetails.id) }
+
+                    userInfo.value = accountDetails
                 }
             }
 
@@ -87,20 +94,8 @@ fun LoginOrg(appViewModel: AppViewModel) {
             UserInfo(userInfo.value!!,googleSignInClient)
         }
     }
-
-
-
 }
 
-
-fun handleSignInResult(task: Task<GoogleSignInAccount>): GoogleSignInAccount {
-
-    val account = task.result
-    Log.d("PRUEBA", "Email: ${account?.email}")
-    account.idToken?.let { Log.d("PRUEBA",  it.toString()) }
-    account.id?.let { Log.d("PRUEBA",  it.toString()) }
-    return account!!
-}
 
 
 private fun getGoogleLoginAuth(context: Context): GoogleSignInClient {
