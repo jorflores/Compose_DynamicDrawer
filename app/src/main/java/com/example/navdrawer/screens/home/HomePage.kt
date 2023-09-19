@@ -15,6 +15,6 @@ fun HomePage(viewModel: AppViewModel) {
 
     Column {
         Text(text = "Welcome to HomePage")
-        Text(text = "Is Logged In: ${viewModel.isUserLoggedIn()}")
+        //Text(text = "Is Logged In: ${viewModel.isUserLoggedIn()}")
     }
 }

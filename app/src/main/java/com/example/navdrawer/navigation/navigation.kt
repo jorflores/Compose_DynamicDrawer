@@ -2,7 +2,10 @@ package com.example.navdrawer.navigation
 
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,6 +26,8 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,9 +47,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -75,9 +84,16 @@ fun MainPage(appViewModel: AppViewModel) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
     val navController = rememberNavController()
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
+    }
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    fun toggleDialog() {
+        showDialog = !showDialog
     }
 
 
@@ -85,18 +101,21 @@ fun MainPage(appViewModel: AppViewModel) {
         mutableStateOf(appViewModel.isUserLoggedIn())
     }
 
-   /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
-        appViewModel.isInitialized.collect { result ->
-
-            loggedIn = result
-
-        }
-    }*/
 
 
-   /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
-        loggedIn = appViewModel.isUserLoggedIn()
-    }*/
+
+    /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
+         appViewModel.isInitialized.collect { result ->
+
+             loggedIn = result
+
+         }
+     }*/
+
+
+    /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
+         loggedIn = appViewModel.isUserLoggedIn()
+     }*/
 
     val items = if (!loggedIn) mutableListOf(
         NavigationItem(
@@ -180,7 +199,7 @@ fun MainPage(appViewModel: AppViewModel) {
 
 
 
-    if(appViewModel.isAdmin()){
+    if (appViewModel.isAdmin()) {
         items.add(
             NavigationItem(
                 title = "Add Organization",
@@ -223,6 +242,65 @@ fun MainPage(appViewModel: AppViewModel) {
                         .padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
             }
+
+            if (loggedIn) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    Column {
+                        Text(
+                        text = "Bienvenido! Sesión activa",
+                        style = TextStyle(
+                            fontWeight = FontWeight.Light,
+                            fontSize = 18.sp
+                        )
+                    )
+                        Button(onClick = {
+
+
+
+                            toggleDialog()
+
+                        }) {
+                            Text(text = "Finalizar Sesión")
+                        }
+                    }
+
+                }
+
+            }
+            else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    Column {
+                        Text(
+                        text = "Usuario invitado",
+                        style = TextStyle(
+                            fontWeight = FontWeight.Light,
+                            fontSize = 18.sp
+                        )
+                    )
+                        Text(
+                            text = "Registra una cuenta o inicia sesión para aprovechar al máximo la aplicación. ",
+                            style = TextStyle(
+                                fontWeight = FontWeight.Light,
+                                fontSize = 14.sp
+                            )
+                        )
+
+                    }
+
+                }
+            }
+
+
         }
     }, drawerState = drawerState) {
 
@@ -263,7 +341,7 @@ fun MainPage(appViewModel: AppViewModel) {
                     }
 
                     composable("RegisterPage") {
-                        RegisterPage(appViewModel)
+                        RegisterPage(appViewModel,navController)
                     }
 
                     composable("RegisterOrg") {
@@ -275,17 +353,11 @@ fun MainPage(appViewModel: AppViewModel) {
                     }
 
 
-
                     composable("LoginPage") {
-                        LoginPage(appViewModel){
-                                value ->
+                        LoginPage(appViewModel,navController) { value ->
                             loggedIn = value
                         }
                     }
-
-
-
-
 
 
                     composable("TestProtectedPage") {
@@ -304,6 +376,45 @@ fun MainPage(appViewModel: AppViewModel) {
             }
         }
     }
+
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { toggleDialog() },
+            title = { Text(text = "Confirm Logout") },
+            text = { Text(text = "Are you sure you want to log out?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        // Perform logout action here
+                        // You can use navController to navigate to the login page
+                        navController.navigate("LoginPage")
+                        loggedIn = false // Update your loggedIn state
+                        appViewModel.deleteToken()
+                        appViewModel.setLoggedOut()
+                        toggleDialog() // Close the dialog
+                        scope.launch {
+                            drawerState.close()
+                        }
+                    }
+                ) {
+                    Text(text = "Logout")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        toggleDialog() // Close the dialog
+                    }
+                ) {
+                    Text(text = "Cancel")
+                }
+            }
+        )
+    }
+
+
+
 }
 
 

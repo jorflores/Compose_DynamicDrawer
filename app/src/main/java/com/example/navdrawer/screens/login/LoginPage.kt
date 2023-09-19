@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.model.UserLoginResponse
@@ -34,6 +35,7 @@ import com.example.navdrawer.viewModel.UserViewModel
 @Composable
 fun LoginPage(
     appviewModel: AppViewModel,
+    navController: NavHostController,
     onLoggedInChanged: (Boolean) -> Unit
 ) {
 
@@ -60,6 +62,7 @@ fun LoginPage(
                     appviewModel.storeValueInDataStore(it, Constants.TOKEN)
                     appviewModel.setToken(it)
                     appviewModel.setLoggedIn()
+                    navController.navigate("HomePage")
 
                     Log.d("DATASTORE", "Token saved: ${it}")
                 }
@@ -112,7 +115,9 @@ fun LoginPage(
             Text(text = "Ingresar")
         }
 
-        Text("${loginResult.token}  ${loginResult.message}")
+
+       // Text("${loginResult.token}  ")
+        //Text(" ${loginResult.message}")
 
 
     }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,17 +25,23 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.navdrawer.screens.organizations.showToast
 import com.example.navdrawer.service.UserService
 import com.example.navdrawer.viewModel.AppViewModel
 import com.example.navdrawer.viewModel.UserViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
-
-@Preview(showBackground = true)
 @Composable
-fun RegisterPage(appViewModel: AppViewModel = AppViewModel(LocalContext.current)) {
+fun RegisterPage(
+    appViewModel: AppViewModel = AppViewModel(LocalContext.current),
+    navController: NavHostController,
+) {
 
     val viewModel = UserViewModel(UserService.instance)
+    var showDelayedText by remember { mutableStateOf(false) }
 
     var telefono by remember {
         mutableStateOf("")
@@ -93,25 +100,45 @@ fun RegisterPage(appViewModel: AppViewModel = AppViewModel(LocalContext.current)
 
         Button(onClick = {
 
-            viewModel.addUser(telefono.trim().toInt(),password)
+            viewModel.addUser(telefono.trim().toInt(), password)
 
 
         }) {
             Text(text = "Registrar Usuario")
         }
 
+        LaunchedEffect(showDelayedText) {
+            if (showDelayedText) {
+                launch {
+
+                    delay(5000) // Delay for 2 seconds (adjust as needed)
+                    showDelayedText = false
+                    navController.navigate("LoginPage")
+                }
+            }
+        }
+
+
+        if (showDelayedText) {
+
+            Text(text = "Registro Exitoso")
+            Text(text = "En 5 segundos serás redirigido a la pantalla para iniciar sesión.")
+        }
 
         when (val result = registrationResult) {
             is UserViewModel.ApiResult.Success -> {
+                Log.d("REGISTER", result.message)
                 showToast("${result.message}")
-                Log.d("REGISTER",result.message)
+                showDelayedText = true
             }
+
             is UserViewModel.ApiResult.Error -> {
                 showToast("${result.errorMessage}")
-                Log.d("REGISTER",result.errorMessage)
+                Log.d("REGISTER", result.errorMessage)
             }
+
             else -> {
-                Log.d("REGISTER",result.toString())
+                Log.d("REGISTER", result.toString())
             }
         }
 
