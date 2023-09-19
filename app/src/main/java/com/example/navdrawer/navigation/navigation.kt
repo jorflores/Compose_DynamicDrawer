@@ -149,6 +149,12 @@ fun MainPage(appViewModel: AppViewModel) {
             route = "LoginPage"
         ),
         NavigationItem(
+            title = "Org Login",
+            selectedIcon = Icons.Filled.Info,
+            unselectedIcon = Icons.Outlined.Info,
+            route = "OrgLogin"
+        ),
+        NavigationItem(
             title = "Test Protected Page",
             selectedIcon = Icons.Filled.Lock,
             unselectedIcon = Icons.Outlined.Lock,
@@ -180,23 +186,8 @@ fun MainPage(appViewModel: AppViewModel) {
                 selectedIcon = Icons.Filled.Lock,
                 unselectedIcon = Icons.Outlined.Lock,
                 route = "TestProtectedPage"
-            ),
-            NavigationItem(
-                title = "LogOut",
-                selectedIcon = Icons.Filled.Clear,
-                unselectedIcon = Icons.Outlined.Clear,
-                route = "LogOff"
-            ),
-            NavigationItem(
-                title = "Org Login",
-                selectedIcon = Icons.Filled.Info,
-                unselectedIcon = Icons.Outlined.Info,
-                route = "OrgLogin"
             )
         )
-
-
-
 
 
     if (appViewModel.isAdmin()) {
