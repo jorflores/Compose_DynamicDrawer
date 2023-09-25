@@ -20,6 +20,8 @@ class AppViewModel(private val appContext: Application) : AndroidViewModel(appCo
     private var token = ""
     private var isLoggedIn = false
     private var isAdmin = false
+    private var signedPrivacy = false
+
 
 
     private val _isInitialized = MutableStateFlow(false)
@@ -32,11 +34,15 @@ class AppViewModel(private val appContext: Application) : AndroidViewModel(appCo
             val hasTokenResult = appContext.hasKeyWithValue(Constants.TOKEN)
             val token = appContext.getValueFromDataStore(Constants.TOKEN, "")
             val isAdmin = appContext.getValueFromDataStore(Constants.ISADMIN, false)
+            val signed = appContext.getValueFromDataStore(Constants.SIGNED_PRIVACY,false)
 
             if (hasTokenResult) {
                 setLoggedIn()
                 setToken(token)
                 setIsAdmin(isAdmin)
+            }
+            if (signed){
+                setSignedPrivacy()
             }
             _isInitialized.value = true
             Log.d("POSTVALUE","posting value *** ${_isInitialized.value}")
@@ -85,5 +91,13 @@ class AppViewModel(private val appContext: Application) : AndroidViewModel(appCo
 
     fun setIsAdmin(value: Boolean){
         isAdmin = value
+    }
+
+    fun setSignedPrivacy(){
+        signedPrivacy = true
+    }
+
+    fun isPrivacySigned(): Boolean{
+        return signedPrivacy
     }
 }

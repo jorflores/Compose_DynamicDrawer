@@ -77,7 +77,7 @@ fun LoginPage(
                     appviewModel.setToken(it)
                     appviewModel.setLoggedIn()
                     onLoggedInChanged(true)
-                    navController.navigate("HomePage")
+                    navController.navigate("Privacy")
 
                     Log.d("DATASTORE", "Token saved: ${it}")
                 }

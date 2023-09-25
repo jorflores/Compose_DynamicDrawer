@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
@@ -63,9 +61,11 @@ import com.example.navdrawer.screens.home.HomePage
 import com.example.navdrawer.screens.login.LoginPage
 import com.example.navdrawer.screens.organizations.LoginOrg
 import com.example.navdrawer.screens.organizations.RegisterOrgPage
+import com.example.navdrawer.screens.privacy.PrivacyPage
 import com.example.navdrawer.screens.protect.TestProtectedPage
 import com.example.navdrawer.screens.register.RegisterPage
 import com.example.navdrawer.screens.settings.SettingsPage
+import com.example.navdrawer.util.constants.Constants
 
 import kotlinx.coroutines.launch
 
@@ -100,6 +100,7 @@ fun MainPage(appViewModel: AppViewModel) {
     var loggedIn by remember {
         mutableStateOf(appViewModel.isUserLoggedIn())
     }
+
 
 
 
@@ -324,11 +325,13 @@ fun MainPage(appViewModel: AppViewModel) {
                 NavHost(navController = navController, startDestination = "HomePage") {
 
                     composable("HomePage") {
-                        HomePage(appViewModel)
+
+
+                        HomePage(appViewModel,navController)
                     }
 
                     composable("AboutPage") {
-                        AboutPage(appViewModel)
+                        AboutPage(appViewModel,navController)
                     }
 
                     composable("RegisterPage") {
@@ -341,6 +344,23 @@ fun MainPage(appViewModel: AppViewModel) {
 
                     composable("OrgLogin") {
                         LoginOrg(appViewModel)
+                    }
+
+                    composable("Privacy"){
+                        PrivacyPage(appViewModel,onAgreeClicked = {
+
+                            appViewModel.storeValueInDataStore(true,Constants.SIGNED_PRIVACY)
+                            appViewModel.setSignedPrivacy()
+                            // Handle what should happen when the user agrees
+                            // For example, navigate to the next screen
+                            navController.navigate("HomePage")
+                        }
+                        ) {
+                            // Handle what should happen when the user disagrees
+                            // For example, show a message or take appropriate action
+                            // You can also navigate to a different screen if needed
+                            //navController.navigate("DisagreeScreen")
+                        }
                     }
 
 
