@@ -7,7 +7,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -15,10 +14,8 @@ import kotlinx.coroutines.withContext
 
 
 const val DATASTORE = "my_datastore"
+
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DATASTORE)
-
-
-class DataStoreManager(val context: Context) {
 
 
     /* suspend fun storeValue(value: String, key:  Preferences.Key<String>) {
@@ -29,25 +26,25 @@ class DataStoreManager(val context: Context) {
 
     }*/
 
-    suspend fun <T> storeValue(value: T, key: Preferences.Key<T>) {
-        context.dataStore.edit { preferences ->
+    suspend fun <T> Context.storeValue(value: T, key: Preferences.Key<T>) {
+        dataStore.edit { preferences ->
             preferences[key] = value
         }
         Log.d("DATASTORE", "Value saved: $value")
     }
 
 
-    suspend fun deleteValue(key: Preferences.Key<*>) {
-        context.dataStore.edit { preferences ->
+    suspend fun Context.deleteValue(key: Preferences.Key<*>) {
+        dataStore.edit { preferences ->
             preferences.remove(key)
         }
         Log.d("DATASTORE", "Key deleted: ${key.name}")
     }
 
-    suspend fun hasKeyWithValue(key:  Preferences.Key<String>): Boolean {
+    suspend fun Context.hasKeyWithValue(key:  Preferences.Key<String>): Boolean {
 
         return withContext(Dispatchers.IO) {
-            context.dataStore.data.map { preferences ->
+            dataStore.data.map { preferences ->
                 preferences[key] ?: ""
             }.first().isNotEmpty()
         }
@@ -57,13 +54,12 @@ class DataStoreManager(val context: Context) {
 
     // val token: String = getValueFromDataStore(TOKEN, "")
     // val someValue: Int = getValueFromDataStore(SOME_KEY, 0)
-    suspend inline fun <reified T : Any> getValueFromDataStore(key: Preferences.Key<T>, defaultValue: T): T {
+    suspend inline fun <reified T : Any> Context.getValueFromDataStore(key: Preferences.Key<T>, defaultValue: T): T {
         return withContext(Dispatchers.IO) {
-            context.dataStore.data.map { preferences ->
+            dataStore.data.map { preferences ->
                 preferences[key] ?: defaultValue
             }.first()
         }
     }
 
 
-}

@@ -1,20 +1,21 @@
 package com.example.navdrawer.viewModel
 
 
-import android.content.Context
+import android.app.Application
 import android.util.Log
 import androidx.datastore.preferences.core.Preferences
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.navdrawer.dataStore.DataStoreManager
+import com.example.navdrawer.dataStore.deleteValue
+import com.example.navdrawer.dataStore.getValueFromDataStore
+import com.example.navdrawer.dataStore.hasKeyWithValue
+import com.example.navdrawer.dataStore.storeValue
 import com.example.navdrawer.util.constants.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AppViewModel(context: Context) : ViewModel() {
-
-    val dataStore = DataStoreManager(context)
+class AppViewModel(private val appContext: Application) : AndroidViewModel(appContext) {
 
     private var token = ""
     private var isLoggedIn = false
@@ -28,9 +29,9 @@ class AppViewModel(context: Context) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            val hasTokenResult = dataStore.hasKeyWithValue(Constants.TOKEN)
-            val token = dataStore.getValueFromDataStore(Constants.TOKEN, "")
-            val isAdmin = dataStore.getValueFromDataStore(Constants.ISADMIN, false)
+            val hasTokenResult = appContext.hasKeyWithValue(Constants.TOKEN)
+            val token = appContext.getValueFromDataStore(Constants.TOKEN, "")
+            val isAdmin = appContext.getValueFromDataStore(Constants.ISADMIN, false)
 
             if (hasTokenResult) {
                 setLoggedIn()
@@ -45,14 +46,14 @@ class AppViewModel(context: Context) : ViewModel() {
 
      fun <T> storeValueInDataStore(value: T, key: Preferences.Key<T>) {
         viewModelScope.launch {
-            dataStore.storeValue(value, key)
+            appContext.storeValue(value, key)
         }
     }
 
 
     fun deleteToken(){
         viewModelScope.launch {
-            dataStore.deleteValue(Constants.TOKEN)
+            appContext.deleteValue(Constants.TOKEN)
             token =""
             setLoggedOut()
         }

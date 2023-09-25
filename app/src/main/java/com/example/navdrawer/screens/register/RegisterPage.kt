@@ -1,5 +1,6 @@
 package com.example.navdrawer.screens.register
 
+import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterPage(
-    appViewModel: AppViewModel = AppViewModel(LocalContext.current),
+    appViewModel: AppViewModel = AppViewModel(Application()),
     navController: NavHostController,
 ) {
 

@@ -1,6 +1,7 @@
 package com.example.navdrawer.screens.protect
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,7 @@ import com.example.navdrawer.viewModel.UserViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 @Preview(showBackground = true)
-fun TestProtectedPage(appviewModel: AppViewModel = AppViewModel(LocalContext.current)) {
+fun TestProtectedPage(appviewModel: AppViewModel = AppViewModel(Application())) {
 
 
     val userViewModel = UserViewModel(UserService.instance)

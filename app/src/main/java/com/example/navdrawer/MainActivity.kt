@@ -30,7 +30,6 @@ import com.example.navdrawer.navigation.MainPage
 import com.example.navdrawer.ui.theme.NavDrawerTheme
 import com.example.navdrawer.util.constants.Constants
 import com.example.navdrawer.viewModel.AppViewModel
-import com.example.navdrawer.viewModel.AppViewModelFactory
 import kotlinx.coroutines.delay
 
 
@@ -39,8 +38,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val context = LocalContext.current
-            val appViewModel: AppViewModel = viewModel(factory = AppViewModelFactory(context))
+           // val context = LocalContext.current
+            val appViewModel: AppViewModel = viewModel()
 
             var configLoaded by remember {
                 mutableStateOf(false)
