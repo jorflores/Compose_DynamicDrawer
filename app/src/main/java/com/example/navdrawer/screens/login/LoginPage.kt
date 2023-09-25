@@ -5,8 +5,12 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,7 +35,7 @@ import com.example.navdrawer.util.constants.Constants
 import com.example.navdrawer.viewModel.UserViewModel
 
 
-@SuppressLint("StateFlowValueCalledInComposition")
+@SuppressLint("StateFlowValueCalledInComposition", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LoginPage(
     appviewModel: AppViewModel,
@@ -39,7 +43,7 @@ fun LoginPage(
     onLoggedInChanged: (Boolean) -> Unit
 ) {
 
-
+    val snackbarHostState = remember { SnackbarHostState() }
     val userviewModel = UserViewModel(UserService.instance)
 
     var telefono by remember {
@@ -54,14 +58,25 @@ fun LoginPage(
         mutableStateOf(UserLoginResponse())
     }
 
+
     LaunchedEffect(key1 = userviewModel) {
         userviewModel.loginResult.collect { result ->
             if (result != null) {
+
                 loginResult = result
+
+                if (loginResult?.message != null){
+                    snackbarHostState.showSnackbar(loginResult.message.toString())
+                }
+
+
+
                 loginResult.token?.let {
+                    snackbarHostState.showSnackbar("Login exitoso...")
                     appviewModel.storeValueInDataStore(it, Constants.TOKEN)
                     appviewModel.setToken(it)
                     appviewModel.setLoggedIn()
+                    onLoggedInChanged(true)
                     navController.navigate("HomePage")
 
                     Log.d("DATASTORE", "Token saved: ${it}")
@@ -72,13 +87,21 @@ fun LoginPage(
                 }
 
 
-
-                    // store in store and update viewModel
-
-                onLoggedInChanged(true)
             }
         }
     }
+
+Scaffold(
+
+    snackbarHost = {
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+
+) {
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -110,17 +133,13 @@ fun LoginPage(
 
             userviewModel.loginUser(telefono.trim().toInt(), password)
 
-
         }) {
             Text(text = "Ingresar")
         }
-
-
-       // Text("${loginResult.token}  ")
-        //Text(" ${loginResult.message}")
-
-
     }
+}
+
+
 }
 
 

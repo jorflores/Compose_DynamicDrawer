@@ -60,6 +60,10 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
 
     fun loginUser(telephone: Int, password: String) {
+
+        // Reset the login result to nul before making a new login request
+        _loginResult.value = null
+
         val user = UserLogin(telephone, password)
 
         viewModelScope.launch {
@@ -74,7 +78,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
                     401 -> {
                         Log.d("RESPONSE", e.localizedMessage)
-                        val errorMessage = "Invalid credentials"
+                        val errorMessage = "Credenciales incorrectas"
                         val errorResponse = UserLoginResponse(null, errorMessage)
                         _loginResult.value = errorResponse
                     }
