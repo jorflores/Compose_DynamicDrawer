@@ -1,5 +1,6 @@
 package com.example.navdrawer.screens.organizations
 
+import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +34,7 @@ import com.example.navdrawer.viewModel.OrgViewModel
 
 @Preview(showBackground = true)
 @Composable
-fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(LocalContext.current)) {
+fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(Application())) {
 
     val orgViewModel = OrgViewModel(OrgService.instance)
 
