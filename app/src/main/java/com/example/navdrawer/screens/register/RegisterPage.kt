@@ -27,6 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.navdrawer.model.UserLoginResponse
+import com.example.navdrawer.model.UserRegistrationResponse
 import com.example.navdrawer.screens.organizations.showToast
 import com.example.navdrawer.service.UserService
 import com.example.navdrawer.viewModel.AppViewModel
@@ -56,11 +58,20 @@ fun RegisterPage(
         mutableStateOf("")
     }
 
-    var registrationResult by remember { mutableStateOf<UserViewModel.ApiResult?>(null) }
+    var registrationResult by remember { mutableStateOf(UserRegistrationResponse()) }
+
+
 
     LaunchedEffect(key1 = viewModel) {
         viewModel.registrationResult.collect { result ->
-            registrationResult = result
+            if (result != null) {
+                registrationResult = result
+
+                showDelayedText = true
+
+
+
+            }
         }
     }
 
@@ -126,31 +137,6 @@ fun RegisterPage(
             Text(text = "En 5 segundos serás redirigido a la pantalla para iniciar sesión.")
         }
 
-        when (val result = registrationResult) {
-            is UserViewModel.ApiResult.Success -> {
-                Log.d("REGISTER", result.message)
-                showToast("${result.message}")
-                showDelayedText = true
-            }
-
-            is UserViewModel.ApiResult.Error -> {
-                showToast("${result.errorMessage}")
-                Log.d("REGISTER", result.errorMessage)
-            }
-
-            else -> {
-                Log.d("REGISTER", result.toString())
-            }
-        }
 
     }
-}
-
-
-@Composable
-fun showToast(message: String) {
-    val context = LocalContext.current
-    val duration = Toast.LENGTH_SHORT
-    val toast = Toast.makeText(context, message, duration)
-    toast.show()
 }
