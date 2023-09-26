@@ -21,15 +21,19 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bumptech.glide.Glide
 
 import com.example.navdrawer.navigation.MainPage
 import com.example.navdrawer.ui.theme.NavDrawerTheme
 import com.example.navdrawer.util.constants.Constants
 import com.example.navdrawer.viewModel.AppViewModel
+import com.skydoves.landscapist.CircularReveal
+import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.delay
 
 
@@ -46,7 +50,7 @@ class MainActivity : ComponentActivity() {
             }
 
             LaunchedEffect(appViewModel.isUserLoggedIn()) {
-                delay(500)
+                delay(2000)
                 appViewModel.isInitialized.collect { result ->
                     configLoaded = result
                 }
@@ -70,7 +74,12 @@ class MainActivity : ComponentActivity() {
                                 color = Color.Blue,
                                 strokeWidth = 8.dp
                             )*/
-                        Text(text = "Loading...")
+
+
+                        GlideImage(imageModel = "https://media.giphy.com/media/jAYUbVXgESSti/giphy.gif",modifier = Modifier.fillMaxSize(), contentDescription = null )
+
+                        //Text(text = "Loading...")
+
                     }
                 }
             }

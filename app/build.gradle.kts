@@ -89,4 +89,7 @@ dependencies {
 
     implementation ("com.google.android.gms:play-services-auth:19.2.0")
 
+
+    implementation ("com.github.skydoves:landscapist-glide:1.3.7")
+
 }
