@@ -18,22 +18,18 @@ import retrofit2.HttpException
 
 class UserViewModel(private val userService: UserService) : ViewModel() {
 
-    sealed class ApiResult {
-        data class Success(val message: String) : ApiResult()
-        data class Error(val errorMessage: String) : ApiResult()
-    }
 
+    private val _registrationResult = MutableStateFlow<UserRegistrationResponse?>(null)
+    val registrationResult: StateFlow<UserRegistrationResponse?> = _registrationResult
 
-    private val _registrationResult = MutableStateFlow<ApiResult?>(null)
-    val registrationResult: StateFlow<ApiResult?> = _registrationResult
 
     private val _loginResult = MutableStateFlow<UserLoginResponse?>(null)
-    val loginResult: StateFlow<UserLoginResponse?> //= _loginResult
+    val loginResult: StateFlow<UserLoginResponse?>
         get() = _loginResult
 
 
     private val _protectedResult = MutableStateFlow<UserProtectedResponse?>(null)
-    val protectedResult: StateFlow<UserProtectedResponse?> //= _loginResult
+    val protectedResult: StateFlow<UserProtectedResponse?>
         get() = _protectedResult
 
 
@@ -43,17 +39,15 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
         val user = UserRegister(telephone, password)
 
         viewModelScope.launch {
-            var response: UserRegistrationResponse? = null
+            var response: UserRegistrationResponse
             try {
                 response = userService.insertUser(user)
-                _registrationResult.value = ApiResult.Success(response.message)
+                _registrationResult.value = response
             } catch (e: Exception) {
-                e.message?.let {
-                    if (response != null) {
-                        _registrationResult.value = ApiResult.Error(it)
-                    }
 
-                }
+                var errorResponse = UserRegistrationResponse("")
+                errorResponse.message = e.localizedMessage
+                _registrationResult.value = errorResponse
             }
         }
     }
@@ -67,7 +61,8 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
         val user = UserLogin(telephone, password)
 
         viewModelScope.launch {
-            var response: UserLoginResponse? = null
+            var response: UserLoginResponse
+
             try {
                 response = userService.loginUser(user)
                 _loginResult.value = response
