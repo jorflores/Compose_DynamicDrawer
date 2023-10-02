@@ -363,12 +363,7 @@ fun MainPage(appViewModel: AppViewModel) {
 
 
                     composable("SettingsPage") {
-                        SettingsPage(appViewModel, navController) { value ->
-                            // Update the loggedIn state in MainPage when it changes
-                           // loggedIn.value = value
-                            appViewModel.setLoggedIn(value)
-                            //  selectedItemIndex = if (value) 1 else 0
-                        }
+                        SettingsPage(appViewModel)
                     }
                 }
             }
