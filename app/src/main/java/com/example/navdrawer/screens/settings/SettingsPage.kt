@@ -27,6 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.navdrawer.model.Etiqueta
+import com.example.navdrawer.model.GetUserFavoriteOrganizationsResponse
+import com.example.navdrawer.service.UserService
 import com.example.navdrawer.viewModel.AppViewModel
+import com.example.navdrawer.viewModel.UserViewModel
 
 
 val charitableOrganizationNames = listOf(
@@ -58,20 +62,49 @@ val charitableOrganizationNames = listOf(
     Etiqueta(id = "ID_8", nombre = "Charity I"),
     Etiqueta(id = "ID_9", nombre = "Charity J")
 )
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsPage(
     appViewModel: AppViewModel
 ) {
 
+    val userviewModel = UserViewModel(UserService.instance)
+
+    val Organizations = remember {
+        mutableStateOf(GetUserFavoriteOrganizationsResponse())
+    }
+
+    LaunchedEffect(key1 = userviewModel.getUserFavoriteOrgsResult) {
+        userviewModel.getUserFavoriteOrganization(appViewModel.getToken())
+        userviewModel.getUserFavoriteOrgsResult.collect { result ->
+            if (result != null) {
+
+                val organizationsResponse = GetUserFavoriteOrganizationsResponse()
+                organizationsResponse.addAll(result)
+                Organizations.value = organizationsResponse
+
+            }
+        }
+    }
+
+
     Column {
 
         Text(text = "My favorite Orgs")
 
-
-        FlowRow {
+        // Local
+        /*FlowRow {
             charitableOrganizationNames.forEach {
                 OrgTagCard(it.id,it.nombre)
+            }
+        }*/
+
+        // From Api
+
+        FlowRow {
+            Organizations.value.forEach {
+                OrgTagCard(it._id, it.name)
             }
         }
     }
@@ -82,18 +115,18 @@ fun SettingsPage(
 @OptIn(ExperimentalLayoutApi::class)
 @Preview
 @Composable
-fun PreviewOrgList(){
+fun PreviewOrgList() {
 
     FlowRow {
         charitableOrganizationNames.forEach {
-            OrgTagCard(it.id,it.nombre)
+            OrgTagCard(it.id, it.nombre)
         }
     }
 }
 
 @Preview
 @Composable
-fun OrgTagCard(id: String="123", name: String = "Charity A") {
+fun OrgTagCard(id: String = "123", name: String = "Charity A") {
 
     var isFavorite by remember { mutableStateOf(false) }
 
@@ -124,7 +157,10 @@ fun OrgTagCard(id: String="123", name: String = "Charity A") {
 
             Text(
                 text = name,
-                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 14.sp) // Reduce text size
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                ) // Reduce text size
             )
         }
     }

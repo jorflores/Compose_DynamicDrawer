@@ -1,15 +1,16 @@
 package com.example.navdrawer.viewModel
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.navdrawer.model.AddFavoriteOrganizationResponse
 import com.example.navdrawer.model.UserLogin
 import com.example.navdrawer.model.UserLoginResponse
 import com.example.navdrawer.model.UserProtectedResponse
 import com.example.navdrawer.model.UserRegister
 import com.example.navdrawer.model.UserRegistrationResponse
+import com.example.navdrawer.model.GetUserFavoriteOrganizationsResponse
+import com.example.navdrawer.model.GetUserFavoriteOrganizationsResponseItem
 import com.example.navdrawer.service.UserService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,11 +28,17 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
     val loginResult: StateFlow<UserLoginResponse?> = _loginResult
 
 
-
     private val _protectedResult = MutableStateFlow<UserProtectedResponse?>(null)
     val protectedResult: StateFlow<UserProtectedResponse?> = _protectedResult
 
 
+    private val _addOrgFavoriteResult = MutableStateFlow<AddFavoriteOrganizationResponse?>(null)
+    val addOrgFavoriteResult: StateFlow<AddFavoriteOrganizationResponse?> = _addOrgFavoriteResult
+
+
+
+    private val _getUserFavoriteOrgsResult = MutableStateFlow<GetUserFavoriteOrganizationsResponse?>(null)
+    val getUserFavoriteOrgsResult: StateFlow<GetUserFavoriteOrganizationsResponse?> = _getUserFavoriteOrgsResult
 
     fun addUser(telephone: Int, password: String) {
         val user = UserRegister(telephone, password)
@@ -45,6 +52,41 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
                 val errorResponse = UserRegistrationResponse(e.localizedMessage)
                 _registrationResult.value = errorResponse
+            }
+        }
+    }
+
+
+    fun getUserFavoriteOrganization(token: String) {
+
+
+        viewModelScope.launch {
+            val response: GetUserFavoriteOrganizationsResponse
+            try {
+                response = userService.getUserFavoriteOrganization(token)
+                _getUserFavoriteOrgsResult.value = response
+            } catch (e: Exception) {
+
+                val errorResponse = e.localizedMessage
+                Log.d("ERROR-API", errorResponse)
+                //_getUserFavoriteOrgsResult.value = errorResponse
+            }
+        }
+    }
+
+
+    fun addUserFavoriteOrganization(token: String, orgId: String) {
+
+
+        viewModelScope.launch {
+            val response: AddFavoriteOrganizationResponse
+            try {
+                response = userService.addFavoriteOrganization(token, orgId)
+                _addOrgFavoriteResult.value = response
+            } catch (e: Exception) {
+
+                val errorResponse = AddFavoriteOrganizationResponse(e.localizedMessage)
+                _addOrgFavoriteResult.value = errorResponse
             }
         }
     }
@@ -82,8 +124,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
                         _loginResult.value = errorResponse
                     }
                 }
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 Log.d("RESPONSE", e.localizedMessage)
                 val errorMessage = e.localizedMessage
                 val errorResponse = UserLoginResponse(null, errorMessage)
@@ -94,11 +135,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
     }
 
 
-
-
-
-
-    fun testProtectedRequest(token : String) {
+    fun testProtectedRequest(token: String) {
 
 
         viewModelScope.launch {
@@ -132,13 +169,6 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
         }
     }
-
-
-
-
-
-
-
 
 
 }
