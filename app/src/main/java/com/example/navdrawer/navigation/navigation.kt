@@ -1,6 +1,7 @@
 package com.example.navdrawer.navigation
 
 
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 
@@ -86,39 +87,23 @@ fun MainPage(appViewModel: AppViewModel) {
     val scope = rememberCoroutineScope()
 
     val navController = rememberNavController()
-    var selectedItemIndex by rememberSaveable {
+    val selectedItemIndex = rememberSaveable {
         mutableStateOf(0)
     }
 
-    var showDialog by remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
 
     fun toggleDialog() {
-        showDialog = !showDialog
+        showDialog.value = !showDialog.value
     }
 
 
-    var loggedIn by remember {
+    /*val loggedIn = remember {
         mutableStateOf(appViewModel.isUserLoggedIn())
-    }
+    }*/
 
 
-
-
-
-    /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
-         appViewModel.isInitialized.collect { result ->
-
-             loggedIn = result
-
-         }
-     }*/
-
-
-    /* LaunchedEffect(appViewModel.isUserLoggedIn()) {
-         loggedIn = appViewModel.isUserLoggedIn()
-     }*/
-
-    val items = if (!loggedIn) mutableListOf(
+    val items = if (!appViewModel.isUserLoggedIn()) mutableListOf(
         NavigationItem(
             title = "HomePage",
             selectedIcon = Icons.Filled.Home,
@@ -214,17 +199,17 @@ fun MainPage(appViewModel: AppViewModel) {
                     label = {
                         Text(text = item.title)
                     },
-                    selected = index == selectedItemIndex,
+                    selected = index == selectedItemIndex.value,
                     onClick = {
                         navController.navigate(item.route)
-                        selectedItemIndex = index
+                        selectedItemIndex.value = index
                         scope.launch {
                             drawerState.close()
                         }
                     },
                     icon = {
                         Icon(
-                            imageVector = if (index == selectedItemIndex) {
+                            imageVector = if (index == selectedItemIndex.value) {
                                 item.selectedIcon
                             } else item.unselectedIcon,
                             contentDescription = item.title
@@ -235,7 +220,7 @@ fun MainPage(appViewModel: AppViewModel) {
                 )
             }
 
-            if (loggedIn) {
+            if (appViewModel.isUserLoggedIn()) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -366,7 +351,8 @@ fun MainPage(appViewModel: AppViewModel) {
 
                     composable("LoginPage") {
                         LoginPage(appViewModel,navController) { value ->
-                            loggedIn = value
+                            //loggedIn.value = value
+                            appViewModel.setLoggedIn(value)
                         }
                     }
 
@@ -379,7 +365,8 @@ fun MainPage(appViewModel: AppViewModel) {
                     composable("SettingsPage") {
                         SettingsPage(appViewModel, navController) { value ->
                             // Update the loggedIn state in MainPage when it changes
-                            loggedIn = value
+                           // loggedIn.value = value
+                            appViewModel.setLoggedIn(value)
                             //  selectedItemIndex = if (value) 1 else 0
                         }
                     }
@@ -389,7 +376,7 @@ fun MainPage(appViewModel: AppViewModel) {
     }
 
 
-    if (showDialog) {
+    if (showDialog.value) {
         AlertDialog(
             onDismissRequest = { toggleDialog() },
             title = { Text(text = "Confirm Logout") },
@@ -400,7 +387,8 @@ fun MainPage(appViewModel: AppViewModel) {
                         // Perform logout action here
                         // You can use navController to navigate to the login page
                         navController.navigate("LoginPage")
-                        loggedIn = false // Update your loggedIn state
+                        //loggedIn.value = false // Update your loggedIn state
+                        appViewModel.setLoggedIn(false)
                         appViewModel.deleteToken()
                         appViewModel.setLoggedOut()
                         toggleDialog() // Close the dialog

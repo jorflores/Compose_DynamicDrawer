@@ -24,14 +24,12 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
 
     private val _loginResult = MutableStateFlow<UserLoginResponse?>(null)
-    val loginResult: StateFlow<UserLoginResponse?>
-        get() = _loginResult
+    val loginResult: StateFlow<UserLoginResponse?> = _loginResult
+
 
 
     private val _protectedResult = MutableStateFlow<UserProtectedResponse?>(null)
-    val protectedResult: StateFlow<UserProtectedResponse?>
-        get() = _protectedResult
-
+    val protectedResult: StateFlow<UserProtectedResponse?> = _protectedResult
 
 
 
@@ -39,14 +37,13 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
         val user = UserRegister(telephone, password)
 
         viewModelScope.launch {
-            var response: UserRegistrationResponse
+            val response: UserRegistrationResponse
             try {
                 response = userService.insertUser(user)
                 _registrationResult.value = response
             } catch (e: Exception) {
 
-                var errorResponse = UserRegistrationResponse("")
-                errorResponse.message = e.localizedMessage
+                val errorResponse = UserRegistrationResponse(e.localizedMessage)
                 _registrationResult.value = errorResponse
             }
         }
@@ -61,7 +58,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
         val user = UserLogin(telephone, password)
 
         viewModelScope.launch {
-            var response: UserLoginResponse
+            val response: UserLoginResponse
 
             try {
                 response = userService.loginUser(user)
@@ -105,7 +102,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
 
         viewModelScope.launch {
-            var response: UserProtectedResponse? = null
+            val response: UserProtectedResponse
             try {
                 response = userService.protectedRoute(token)
                 _protectedResult.value = response

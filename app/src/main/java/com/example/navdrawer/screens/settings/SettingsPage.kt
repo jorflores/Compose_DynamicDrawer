@@ -17,32 +17,25 @@ fun SettingsPage(
     navController: NavHostController,
     onLoggedInChanged: (Boolean) -> Unit
 ) {
-    var loggedIn by remember {
-        mutableStateOf(appViewModel.isUserLoggedIn())
-    }
-
-    var isAdmin by remember {
-        mutableStateOf(appViewModel.isAdmin())
-    }
 
     Column {
         Text(text = "Welcome to SettingsPage")
         Button(onClick = {
-            appViewModel.setLoggedIn()
-            loggedIn = true
+            appViewModel.setLoggedIn(true)
+            appViewModel.setLoggedIn(true)
             onLoggedInChanged(true) // Notify the callback of the change
         }) {
             Text("Log In")
         }
         Button(onClick = {
             appViewModel.setLoggedOut()
-            loggedIn = false
+            appViewModel.setLoggedIn(false)
             onLoggedInChanged(false) // Notify the callback of the change
         }) {
             Text("Log Out")
         }
 
-        Text(text = "Is Admin?:  ${isAdmin}")
+        Text(text = "Is Admin?:  ${appViewModel.isAdmin()}")
     }
 }
 

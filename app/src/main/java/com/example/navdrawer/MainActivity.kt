@@ -45,14 +45,14 @@ class MainActivity : ComponentActivity() {
            // val context = LocalContext.current
             val appViewModel: AppViewModel = viewModel()
 
-            var configLoaded by remember {
+            val configLoaded =  remember {
                 mutableStateOf(false)
             }
 
             LaunchedEffect(appViewModel.isUserLoggedIn()) {
                 delay(2000)
                 appViewModel.isInitialized.collect { result ->
-                    configLoaded = result
+                    configLoaded.value = result
                 }
             }
 
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    if (configLoaded) {
+                    if (configLoaded.value) {
                         MainPage(appViewModel)
                     } else {
                             // Show a loading indicator or splash screen

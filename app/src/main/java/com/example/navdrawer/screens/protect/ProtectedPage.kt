@@ -37,9 +37,9 @@ fun TestProtectedPage(appviewModel: AppViewModel = AppViewModel(Application())) 
 
     val userViewModel = UserViewModel(UserService.instance)
 
-    var hasToken by remember { mutableStateOf(appviewModel.getToken().isNotEmpty()) }
+    val hasToken = remember { mutableStateOf(appviewModel.getToken().isNotEmpty()) }
 
-    var token by remember {
+    val token = remember {
         mutableStateOf(appviewModel.getToken())
     }
 
@@ -56,7 +56,7 @@ Row {
     Button(onClick = {
 
 
-       userViewModel.testProtectedRequest(token)
+       userViewModel.testProtectedRequest(token.value)
 
     }) {
         Text(text = "Request Protected")
@@ -68,8 +68,8 @@ Row {
 
 
         appviewModel.deleteToken()
-        token = ""
-        hasToken = false
+        token.value = ""
+        hasToken.value = false
 
 
 
@@ -80,9 +80,9 @@ Row {
 }
 
 
-        Text(text = "Has token?: $hasToken")
+        Text(text = "Has token?: ${hasToken.value}")
 
-        Text("${token}")
+        Text("${token.value}")
 
     }
 }

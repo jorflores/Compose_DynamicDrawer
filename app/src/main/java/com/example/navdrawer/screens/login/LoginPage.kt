@@ -46,15 +46,15 @@ fun LoginPage(
     val snackbarHostState = remember { SnackbarHostState() }
     val userviewModel = UserViewModel(UserService.instance)
 
-    var telefono by remember {
+    val telefono = remember {
         mutableStateOf("")
     }
 
-    var password by remember {
+    val password = remember {
         mutableStateOf("")
     }
 
-    var loginResult by remember {
+    val loginResult = remember {
         mutableStateOf(UserLoginResponse())
     }
 
@@ -63,25 +63,25 @@ fun LoginPage(
         userviewModel.loginResult.collect { result ->
             if (result != null) {
 
-                loginResult = result
+                loginResult.value = result
 
-                if (loginResult?.message != null){
-                    snackbarHostState.showSnackbar(loginResult.message.toString())
+                if (loginResult.value?.message != null){
+                    snackbarHostState.showSnackbar(loginResult.value.message.toString())
                 }
 
 
 
-                loginResult.token?.let {
+                loginResult.value.token?.let {
                     snackbarHostState.showSnackbar("Login exitoso...")
                     appviewModel.storeValueInDataStore(it, Constants.TOKEN)
                     appviewModel.setToken(it)
-                    appviewModel.setLoggedIn()
+                    appviewModel.setLoggedIn(true)
                     onLoggedInChanged(true)
                     navController.navigate("Privacy")
 
                     Log.d("DATASTORE", "Token saved: ${it}")
                 }
-                loginResult.isAdmin.let {
+                loginResult.value.isAdmin.let {
                     appviewModel.storeValueInDataStore(it,Constants.ISADMIN)
                     appviewModel.setIsAdmin(it)
                 }
@@ -111,16 +111,16 @@ Scaffold(
 
         Text("Login", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
 
-        TextField(value = telefono, onValueChange = {
-            telefono = it
+        TextField(value = telefono.value, onValueChange = {
+            telefono.value = it
         }, placeholder = {
             Text("Teléfono de contacto")
         })
 
         TextField(
-            value = password,
+            value = password.value,
             onValueChange = {
-                password = it
+                password.value = it
             },
             placeholder = {
                 Text("Contraseña")
@@ -131,7 +131,7 @@ Scaffold(
 
         Button(onClick = {
 
-            userviewModel.loginUser(telefono.trim().toInt(), password)
+            userviewModel.loginUser(telefono.value.trim().toInt(), password.value)
 
         }) {
             Text(text = "Ingresar")

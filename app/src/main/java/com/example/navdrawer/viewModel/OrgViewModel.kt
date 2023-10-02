@@ -21,15 +21,14 @@ class OrgViewModel(private val orgService: OrgService) : ViewModel() {
 
 
     private val _orgRegisterResult = MutableStateFlow<OrgRegisterResponse?>(null)
-    val orgRegisterResult: StateFlow<OrgRegisterResponse?>
-        get() = _orgRegisterResult
+    val orgRegisterResult: StateFlow<OrgRegisterResponse?> = _orgRegisterResult
 
 
     fun addOrganization(token: String, org: OrgRegister) {
 
         viewModelScope.launch {
 
-            var response: OrgRegisterResponse? = null
+            val response: OrgRegisterResponse
 
             try {
 

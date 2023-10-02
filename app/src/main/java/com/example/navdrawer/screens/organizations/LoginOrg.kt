@@ -47,7 +47,7 @@ import com.google.android.gms.tasks.Task
 @Composable
 fun LoginOrg(appViewModel: AppViewModel) {
     val context = LocalContext.current
-    var isLoading by remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(false) }
     val googleSignInClient = getGoogleLoginAuth(context)
     val userInfo = remember { mutableStateOf<GoogleSignInAccount?>(null) } // Store user info
 
@@ -80,10 +80,10 @@ fun LoginOrg(appViewModel: AppViewModel) {
             SignInButton(
                 text = "Sign in with Google",
                 loadingText = "Signing in...",
-                isLoading = isLoading,
+                isLoading = isLoading.value,
                 icon = painterResource(id = R.drawable.ic_google_logo),
                 onClick = {
-                    isLoading = true
+                    isLoading.value = true
                     startForResult.launch(googleSignInClient?.signInIntent)
                 }
 

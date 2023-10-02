@@ -38,7 +38,7 @@ fun PrivacyPage(
     onAgreeClicked: () -> Unit,
     onDisagreeClicked: () -> Unit
 ) {
-    var isAgreed by remember { mutableStateOf(false) }
+    val isAgreed = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -64,9 +64,9 @@ fun PrivacyPage(
 
                     item {
                         Checkbox(
-                            checked = isAgreed,
+                            checked = isAgreed.value,
                             onCheckedChange = { isChecked ->
-                                isAgreed = isChecked
+                                isAgreed.value = isChecked
                             }
                         )
                     }
@@ -76,7 +76,7 @@ fun PrivacyPage(
                             text = "I agree to the privacy agreement",
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.clickable {
-                                isAgreed = !isAgreed
+                                isAgreed.value = !isAgreed.value
                             }
                         )
                     }
@@ -88,7 +88,7 @@ fun PrivacyPage(
                     item {
                         Button(
                             onClick = {
-                                if (isAgreed) {
+                                if (isAgreed.value) {
                                     // User has accepted the privacy agreement
                                     onAgreeClicked()
                                 } else {

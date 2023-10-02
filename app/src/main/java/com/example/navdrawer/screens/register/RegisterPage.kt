@@ -44,30 +44,30 @@ fun RegisterPage(
 ) {
 
     val viewModel = UserViewModel(UserService.instance)
-    var showDelayedText by remember { mutableStateOf(false) }
+    val showDelayedText = remember { mutableStateOf(false) }
 
-    var telefono by remember {
+    val telefono = remember {
         mutableStateOf("")
     }
 
-    var password by remember {
+    val password = remember {
         mutableStateOf("")
     }
 
-    var validarpassword by remember {
+    val validarpassword = remember {
         mutableStateOf("")
     }
 
-    var registrationResult by remember { mutableStateOf(UserRegistrationResponse()) }
+    val registrationResult = remember { mutableStateOf(UserRegistrationResponse()) }
 
 
 
     LaunchedEffect(key1 = viewModel) {
         viewModel.registrationResult.collect { result ->
             if (result != null) {
-                registrationResult = result
+                registrationResult.value = result
 
-                showDelayedText = true
+                showDelayedText.value = true
 
 
 
@@ -84,16 +84,16 @@ fun RegisterPage(
 
         Text("Registrar Usuario", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
 
-        TextField(value = telefono, onValueChange = {
-            telefono = it
+        TextField(value = telefono.value, onValueChange = {
+            telefono.value = it
         }, placeholder = {
             Text("Teléfono de contacto")
         })
 
         TextField(
-            value = password,
+            value = password.value,
             onValueChange = {
-                password = it
+                password.value = it
             },
             placeholder = {
                 Text("Contraseña")
@@ -102,8 +102,8 @@ fun RegisterPage(
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
         )
 
-        TextField(value = validarpassword, onValueChange = {
-            validarpassword = it
+        TextField(value = validarpassword.value, onValueChange = {
+            validarpassword.value = it
         }, placeholder = {
             Text("Confirma tu contraseña")
         }, visualTransformation = PasswordVisualTransformation(),
@@ -112,7 +112,7 @@ fun RegisterPage(
 
         Button(onClick = {
 
-            viewModel.addUser(telefono.trim().toInt(), password)
+            viewModel.addUser(telefono.value.trim().toInt(), password.value)
 
 
         }) {
@@ -120,18 +120,18 @@ fun RegisterPage(
         }
 
         LaunchedEffect(showDelayedText) {
-            if (showDelayedText) {
+            if (showDelayedText.value) {
                 launch {
 
                     delay(5000) // Delay for 2 seconds (adjust as needed)
-                    showDelayedText = false
+                    showDelayedText.value = false
                     navController.navigate("LoginPage")
                 }
             }
         }
 
 
-        if (showDelayedText) {
+        if (showDelayedText.value) {
 
             Text(text = "Registro Exitoso")
             Text(text = "En 5 segundos serás redirigido a la pantalla para iniciar sesión.")

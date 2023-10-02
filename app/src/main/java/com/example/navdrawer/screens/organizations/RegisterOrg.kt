@@ -38,19 +38,19 @@ fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(Application())) {
 
     val orgViewModel = OrgViewModel(OrgService.instance)
 
-    var name by remember {
+    val name = remember {
         mutableStateOf("")
     }
 
-    var email by remember {
+    val email = remember {
         mutableStateOf("")
     }
 
-    var description by remember {
+    val description = remember {
         mutableStateOf("")
     }
 
-    var orgRegisterResult by remember {
+    val orgRegisterResult = remember {
         mutableStateOf(OrgRegisterResponse())
     }
 
@@ -58,7 +58,7 @@ fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(Application())) {
     LaunchedEffect(orgViewModel) {
         orgViewModel.orgRegisterResult.collect { result ->
             if (result != null) {
-                orgRegisterResult = result
+                orgRegisterResult.value = result
             }
         }
     }
@@ -72,16 +72,16 @@ fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(Application())) {
 
         Text("Agregar Nueva Organizacion", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
 
-        TextField(value = name, onValueChange = {
-            name = it
+        TextField(value = name.value, onValueChange = {
+            name.value = it
         }, placeholder = {
             Text("Nombre")
         })
 
         TextField(
-            value = email,
+            value = email.value,
             onValueChange = {
-                email = it
+                email.value = it
             },
             placeholder = {
                 Text("Email")
@@ -89,8 +89,8 @@ fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(Application())) {
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
         )
 
-        TextField(value = description, onValueChange = {
-            description = it
+        TextField(value = description.value, onValueChange = {
+            description.value = it
         }, placeholder = {
             Text("Descripcion")
         },
@@ -99,7 +99,7 @@ fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(Application())) {
 
         Button(onClick = {
 
-            val organization = OrgRegister(description,email,name)
+            val organization = OrgRegister(description.value,email.value,name.value)
 
             orgViewModel.addOrganization(appViewModel.getToken(),organization)
 
@@ -108,7 +108,7 @@ fun RegisterOrgPage(appViewModel: AppViewModel = AppViewModel(Application())) {
             Text(text = "Registrar Nueva Organización")
         }
 
-        if (orgRegisterResult.message != null ){
+        if (orgRegisterResult.value.message != null ){
             showToast(message = "Organizacion registrada exitosamente")
         }
 
