@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
            // val context = LocalContext.current
+            //test
             val appViewModel: AppViewModel = viewModel()
 
             val configLoaded =  remember {
